@@ -1,0 +1,7 @@
+Scaffold-DbContext "Server=DESKTOP-M7ACC2C\SQLEXPRESS; Database=store; Trusted_Connection=True; TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+
+
+
+////////////////////////Actualizar Models/////////////////////////////////////////
+
+Scaffold-DbContext "Server=DESKTOP-M7ACC2C\SQLEXPRESS; Database=store; Trusted_Connection=True; TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force
