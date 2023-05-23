@@ -32,41 +32,49 @@ namespace ProyectoIngenieriaSoftware.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Venta model)
+        public async Task<ActionResult> Create(VentaViewModel newVenta)
         {
-            if (ModelState.IsValid)
+            
+            
+
+            // Crear el registro de venta en la tabla "Sales"
+            Sale venta = new Sale
             {
+                IdVenta = GenerarIdVenta(), // Método para generar un nuevo ID de venta
+                FechaVenta = newVenta.fechaCompra,
+                IdCliente = newVenta.cliente,
+                Total = newVenta.totalVenta
+            };
 
-                // Crear el registro de venta en la tabla "Sales"
-                Sale venta = new Sale
-                {
-                    IdVenta = GenerarIdVenta(), // Método para generar un nuevo ID de venta
-                    FechaVenta = model.FechaVenta,
-                    IdCliente = model.IdCliente,
-                    Total = Convert.ToDecimal( await CalcularTotalVenta((int)model.IdProducto, (int)model.Cantidad) ) // Método para calcular el total de la venta
-                };
 
-                // Guardar el registro de venta en la base de datos
-                _context.Sales.Add(venta);
-                _context.SaveChanges();   
+            // Guardar el registro de venta en la base de datos
+            _context.Sales.Add(venta);
+            _context.SaveChanges();
+
+            int idVenta = venta.IdVenta;
+
+            newVenta.Productos.ForEach(p =>
+            {
 
                 // Crear el registro de ítem de venta en la tabla "SalesItems"
                 SalesItem itemVenta = new SalesItem
                 {
-                    IdVenta = venta.IdVenta,
-                    IdProducto = model.IdProducto,
-                    Cantidad = model.Cantidad,
-                    Subtotal = Convert.ToDecimal( await CalcularSubtotalVenta((int)model.IdProducto, (int)model.Cantidad) ) // Método para calcular el subtotal de la venta 
+                    IdVenta = idVenta,
+                    IdProducto = p.idProducto,
+                    Cantidad = p.cantidad,
+                    Subtotal = p.subtotal
                 };
 
                 // Guardar el registro de ítem de venta en la base de datos
                 _context.SalesItems.Add(itemVenta);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index");
-            }
+            });
 
-            return View(model);
+            //    return RedirectToAction("Index");
+
+
+            return Ok();
         }
 
         public int GenerarIdVenta()

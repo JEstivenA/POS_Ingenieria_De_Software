@@ -169,5 +169,19 @@ namespace ProyectoIngenieriaSoftware.Controllers
         {
           return (_context.Products?.Any(e => e.IdProducto == id)).GetValueOrDefault();
         }
+
+        //GET: Products/getProducto
+        public async Task<IActionResult> getProducto(int idProducto) 
+        {
+            Console.WriteLine(idProducto);
+            var producto = await _context.Products.FindAsync(idProducto);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            return Json(producto);
+        }
     }
 }
